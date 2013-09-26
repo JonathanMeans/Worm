@@ -76,17 +76,25 @@ while True:
         
     elif state == 'game':
         screen.blit(font1.render(str(score), True, (0, 0, 0)),
-                                 (15, SCREEN_SIZE[1] - 30))
+                                 (30, SCREEN_SIZE[1] - 30))
         game_worm.draw(screen)
         food.draw(screen)
         # Run collision detection
         if game_worm.collide(food) == 'fail':
+            screen.blit(font.render("FAIL", True, (100,100,0)),(x + 35,y))
+            screen.blit(font1.render("Press any key to play again.", True,
+                                     (245, 0, 20)), (x-10, y+font_height+20))
+            screen.blit(font1.render(str(score), True, (0, 0, 0)),
+                                     (30, SCREEN_SIZE[1] - 30))
+            game_worm.draw(screen)
+            food.draw(screen)
+            pygame.display.update()
+            pygame.time.delay(1000)
             state = 'end'
             
         elif game_worm.collide(food) == 'eat':
             food = worm_obj.Food()
             game_worm.eat()
-            # TODO: Can I do this with a generator thingy?
             for segment in game_worm.worm_list:
                 while segment.outline.colliderect(food.outline):
                     food = worm_obj.Food()
@@ -105,7 +113,7 @@ while True:
                                  (30, SCREEN_SIZE[1] - 30))
         game_worm.draw(screen)
         food.draw(screen)
-                 
+
         
     pygame.display.update()
 

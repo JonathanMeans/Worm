@@ -102,23 +102,28 @@ class Worm:
 
     def eat(self):
         # Inserts a head head in front of worm, making it grow.
-        #TODO: append new segment to tail instead of head so
-        #movement not jerky
+        # movement not jerky
         head = self.worm_list[0]
-        if self.direction == 'up':
-            x = head.x
-            y = head.y - 10
-        elif self.direction == 'down':
-            x = head.x
-            y = head.y + 10
-        elif self.direction == 'right':
-            x = head.x + 10
-            y = head.y
-        elif self.direction == 'left':
-            x = head.x - 10
-            y = head.y
+        tail = self.worm_list[-1]
+        pretail = self.worm_list[-2]
+        if pretail.x == tail.x:
+            assert pretail.y != tail.y
+            if pretail.y > tail.y:
+                x = tail.x
+                y = tail.y - 10
+            elif pretail.y < tail.y:
+                x = tail.x
+                y = tail.y + 10
+        else:
+            assert pretail.y == tail.y
+            if pretail.x < tail.x:
+                x = tail.x + 10
+                y = tail.y
+            elif pretail.x > tail.x:
+                x = tail.x - 10
+                y = tail.y
         new_head = Segment(x, y)
-        self.worm_list.insert(0, new_head)
+        self.worm_list.append(new_head)
 
 class TitleWorm(Worm):
     #This is a subclass of the playable worm. It just rotates around

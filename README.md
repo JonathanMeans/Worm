@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 This is a simple Worm game. The Worm is controlled by the arrow keys.
 
 title.py contains the main loop.
@@ -13,6 +13,5 @@ Both sound files are licensed under the Creative Commons Zero license.
 Current bugs:
 README is criminally short.
 README has erratic formatting.
-When the Worm grows, the extra segment is appended to the front, rather than the back.
-There needs to be a pause on the Game Over screen  before allowing user to start again.
+
 =======
