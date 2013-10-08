@@ -41,7 +41,7 @@ while True:
             # Start/resume game when player presses a key
             if event.type == KEYDOWN:
                 state = 'game'
-                game_worm = worm_obj.Worm()
+                game_worm = worm_obj.AIWorm()
                 food = worm_obj.Food()
                 delay = 200
                 score = 0
@@ -51,10 +51,10 @@ while True:
         if state == 'game':
             #Move worm every [delay] ms
             if event.type == USEREVENT+1:
-                game_worm.move()
+                game_worm.move(food)
             #Respond to keystrokes
             if event.type == KEYDOWN:
-                game_worm.change_dir()
+                game_worm.change_dir(food)
                 
         if event.type == QUIT:
             pygame.quit()
@@ -71,7 +71,7 @@ while True:
         #Move the worm object around the text
         pygame.time.wait(300)
         title_worm.get_dir()
-        title_worm.move()
+        title_worm.move(food)
         title_worm.draw(screen)
         
     elif state == 'game':

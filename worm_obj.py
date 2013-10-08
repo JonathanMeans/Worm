@@ -2,8 +2,30 @@
 import pygame
 import random
 from pygame.locals import *
+import math
 
 SCREEN_SIZE = (300, 300)
+
+def distance(x1, y1, obj):
+    x2 = obj.x
+    y2 = obj.y
+    return math.sqrt((x2-x1)**2 + (y2-y1)**2)
+
+def get_adjacent(x,y):
+    left   =(x-10, y)
+    right  =(x+10, y)
+    up     =(x, y-10)
+    down   =(x, y+10)
+    return [left, right, up, down]
+
+def direction(x, y, obj):
+    if x + 10 == obj.x:
+        return 'left'
+    if x - 10 == obj.x:
+        return 'right'
+    if y + 10 == obj.y:
+        return 'up'
+    return 'down'
 
 class Segment:
     """A 'block' that forms part of the Worm's body."""
@@ -52,7 +74,7 @@ class Worm:
         for segment in self.worm_list:
             segment.draw(surf)
 
-    def move(self):
+    def move(self, food):
         head = self.worm_list[0]
         self.worm_list.pop()
         
@@ -66,7 +88,7 @@ class Worm:
         elif self.direction == 'right':
             self.worm_list.insert(0, Segment(head.x + 10, head.y))
 
-    def change_dir(self):
+    def change_dir(self, food):
         pressed_keys = pygame.key.get_pressed()
         # != bit is there to prevent Worm from going straight backwards.
         # Do not replace with, e.g. if self.direction == 'up'.
@@ -147,4 +169,41 @@ class TitleWorm(Worm):
             self.direction = 'left'
         elif y > 290:
             self.direction = 'right'
+
+class AIWorm(Worm):
+    def move(self, food):
+        self.food = food
+        head = self.worm_list[0]
+        self.get_dir(food, head)
+        self.worm_list.pop()
+
+        #Append new segment in direction of motion
+        if self.direction == 'up':
+            self.worm_list.insert(0, Segment(head.x, head.y - 10))
+        elif self.direction == 'down':
+            self.worm_list.insert(0, Segment(head.x, head.y + 10))
+        elif self.direction == 'left':
+            self.worm_list.insert(0, Segment(head.x - 10, head.y))
+        elif self.direction == 'right':
+            self.worm_list.insert(0, Segment(head.x + 10, head.y))
+
+    def get_dir(self, food, head):
+        self.food = food
+        self.head = head
+        weights = {}
+        adjacent = get_adjacent(self.head.x, self.head.y)
+        for square in adjacent:
+            weights[square] = distance(square[0], square[1], food)
+            for segment in self.worm_list:
+                #weights[square] -= distance(square[0], square[1], segment)/(len(self.worm_list)/1.2)
+                if square[0] == segment.x and square[1] == segment.y:
+                    weights[square] = 1000000
+            if square[0] < 0 or square[0] >= SCREEN_SIZE[0] or square[1] < 0 or square[1] >= SCREEN_SIZE[1]:
+                weights[square] = 1000000
+        sq, nxt = 0, 10000000000
+        for weight in weights.keys():
+            if weights[weight] < nxt:
+                nxt = weights[weight]
+                sq = weight
+        self.direction = direction(sq[0],sq[1], self.head)
                                 
