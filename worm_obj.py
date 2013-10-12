@@ -1,31 +1,16 @@
 # Objects for Worm game
 import pygame
+from worm_fun import *
 import random
 from pygame.locals import *
 import math
 
 SCREEN_SIZE = (300, 300)
 
-def distance(x1, y1, obj):
-    x2 = obj.x
-    y2 = obj.y
-    return math.sqrt((x2-x1)**2 + (y2-y1)**2)
+#color variables
+BLACK = 0,0,0
+WGREEN = 0,255,100
 
-def get_adjacent(x,y):
-    left   =(x-10, y)
-    right  =(x+10, y)
-    up     =(x, y-10)
-    down   =(x, y+10)
-    return [left, right, up, down]
-
-def direction(x, y, obj):
-    if x + 10 == obj.x:
-        return 'left'
-    if x - 10 == obj.x:
-        return 'right'
-    if y + 10 == obj.y:
-        return 'up'
-    return 'down'
 
 class Segment:
     """A 'block' that forms part of the Worm's body."""
@@ -33,7 +18,7 @@ class Segment:
     def __init__(self, x, y):
         """Initialize the Segement.
 
-        Keyword arugments:
+        Keyword arguments:
         x -- the left edge of the Segment
         y -- the top edge of the Segment
 
@@ -41,12 +26,14 @@ class Segment:
         
         self.x = x
         self.y = y
+        #self.box is a red square, self.outline is a thin black border
         self.box = pygame.Rect(x+1, y+1, 8, 8)
         self.outline = pygame.Rect(x, y, 10, 10)
+
     def draw(self, surf):
         self.surf = surf
-        pygame.draw.rect(surf, (0, 0, 0), self.outline)
-        pygame.draw.rect(surf, (0, 255, 100), self.box)
+        pygame.draw.rect(surf, BLACK, self.outline)
+        pygame.draw.rect(surf, WGREEN, self.box)
         
 class Food:
     """Create a randomly-placed block of food."""
@@ -153,24 +140,25 @@ class TitleWorm(Worm):
     def __init__(self):
         self.worm_list = []
         self.direction = 'right'
-        for pair in [(400, 300), (390, 300), (380, 300),
-                     (370, 300), (360, 300), (350, 300), (340, 300)]:
+        for pair in [(200, 150), (190, 150), (180, 150),
+                     (170, 150), (160, 150), (150, 150), (140, 150)]:
             self.worm_list.append(Segment(pair[0], pair[1]))
 
     def get_dir(self):
         head = self.worm_list[0]
         x = head.x
         y = head.y
-        if x > 470 and y > 250:
+        print x,y
+        if x > 240 and y > 140:
             self.direction = 'up'
-        elif x < 300 and y <= 290:
+        elif x < 120 and y <= 100:
             self.direction = 'down'
-        elif y < 250:
+        elif y < 100:
             self.direction = 'left'
-        elif y > 290:
+        elif y > 140:
             self.direction = 'right'
 
-class AIWorm(Worm):
+class SmartWorm(Worm):
     def move(self, food):
         self.food = food
         head = self.worm_list[0]
@@ -195,7 +183,7 @@ class AIWorm(Worm):
         for square in adjacent:
             weights[square] = distance(square[0], square[1], food)
             for segment in self.worm_list:
-                #weights[square] -= distance(square[0], square[1], segment)/(len(self.worm_list)/1.2)
+                weights[square] -= distance(square[0], square[1], segment)/(len(self.worm_list)/1.15)
                 if square[0] == segment.x and square[1] == segment.y:
                     weights[square] = 1000000
             if square[0] < 0 or square[0] >= SCREEN_SIZE[0] or square[1] < 0 or square[1] >= SCREEN_SIZE[1]:
