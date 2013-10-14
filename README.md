@@ -14,9 +14,9 @@ goldberg.ogg was composed by J.S. Bach and performed by Kimiko Ishizaka. It can 
 Both sound files are licensed under the Creative Commons Zero license.
 
 Todo:
-Improve documentation.
-Edit star_search to disallow going through sides.
-Make it faster.
-Program sometimes freezes for no reason.
+<p>Improve documentation.</p>
+<p>Edit star_search to disallow going through sides.</p>
+Make it faster.<br>
+Program sometimes freezes for no reason.<hr>
 
 =======
