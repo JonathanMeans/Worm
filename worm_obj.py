@@ -148,10 +148,9 @@ class TitleWorm(Worm):
         head = self.worm_list[0]
         x = head.x
         y = head.y
-        print x,y
-        if x > 240 and y > 140:
+        if x > 230 and y > 140:
             self.direction = 'up'
-        elif x < 120 and y <= 100:
+        elif x < 70 and y <= 100:
             self.direction = 'down'
         elif y < 100:
             self.direction = 'left'
@@ -176,22 +175,9 @@ class SmartWorm(Worm):
             self.worm_list.insert(0, Segment(head.x + 10, head.y))
 
     def get_dir(self, food, head):
+        #self.worm_list = worm_list
         self.food = food
         self.head = head
-        weights = {}
-        adjacent = get_adjacent(self.head.x, self.head.y)
-        for square in adjacent:
-            weights[square] = distance(square[0], square[1], food)
-            for segment in self.worm_list:
-                weights[square] -= distance(square[0], square[1], segment)/(len(self.worm_list)/1.15)
-                if square[0] == segment.x and square[1] == segment.y:
-                    weights[square] = 1000000
-            if square[0] < 0 or square[0] >= SCREEN_SIZE[0] or square[1] < 0 or square[1] >= SCREEN_SIZE[1]:
-                weights[square] = 1000000
-        sq, nxt = 0, 10000000000
-        for weight in weights.keys():
-            if weights[weight] < nxt:
-                nxt = weights[weight]
-                sq = weight
-        self.direction = direction(sq[0],sq[1], self.head)
+        self.x1, self.x2 = star_search(self.worm_list, self.food)
+        self.direction = direction(self.x1,self.x2, self.head)
                                 

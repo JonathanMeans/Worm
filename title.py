@@ -35,7 +35,7 @@ font1 = pygame.font.SysFont("arial", 20);
 font_height = font.get_linesize()
 
 #food = worm_obj.Food()
-
+title_worm = worm_obj.TitleWorm()
 state = 'title'
 
 # Main loop
@@ -84,7 +84,6 @@ while True:
                     (x + 7, y+font_height+20))
         
         #Move the worm object around the text
-        title_worm = worm_obj.TitleWorm()
         pygame.time.wait(delay) 
         title_worm.get_dir()
         title_worm.move('')
@@ -96,6 +95,7 @@ while True:
         game_worm.draw(screen)
         food.draw(screen)
         # Run collision detection
+        #This handles the case where the worm hits itself or a wall
         if game_worm.collide(food) == 'fail':
             screen.blit(font.render("FAIL", True, (100,100,0)),(x + 35,y))
             screen.blit(font1.render("Press any key to play again.", True,
@@ -107,15 +107,18 @@ while True:
             pygame.display.update()
             pygame.time.delay(1000)
             state = 'end'
-            
+        #Worm collides with food
         elif game_worm.collide(food) == 'eat':
-            food = worm_obj.Food()
+            #food = worm_obj.Food()
             game_worm.eat()
-            for segment in game_worm.worm_list:
-                while segment.outline.colliderect(food.outline):
-                    food = worm_obj.Food()
+            food = worm_obj.Food()
+
+            #Make sure food doesn't generate inside worm
+            #for segment in game_worm.worm_list:
+            #    while segment.outline.colliderect(food.outline):
+            #        food = worm_obj.Food()
             score += 10
-            delay -= 1
+            delay -= 2
             pygame.time.set_timer(USEREVENT+1, delay)
             bite.play()
             
